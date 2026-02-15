@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador de Sistemas - ACT Security</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #990000 0%, #FF0000 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header img {
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            border-color: #FF0000;
+            background: #fff5f5;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: #FF0000;
+            color: white;
+            border-color: #990000;
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #FF0000;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #990000;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .slider-group {
+            margin: 20px 0;
+        }
+
+        .slider-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #FF0000;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #FF0000;
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF0000;
+        }
+
+        .summary-box {
+            background: #f9f9f9;
+            border-left: 4px solid #FF0000;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .summary-box h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item strong {
+            color: #333;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF0000;
+            border-top: 2px solid #FF0000;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF0000, #990000);
+            transition: width 0.3s ease;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF0000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .equipment-image {
+            max-height: 150px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eee;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+        }
+
+        .step.active .step-number {
+            background: #FF0000;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .resolution-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .resolution-card {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .resolution-card:hover {
+            border-color: #FF0000;
+            background: #fff5f5;
+        }
+
+        .resolution-card.selected {
+            background: #FF0000;
+            color: white;
+            border-color: #990000;
+        }
+
+        .resolution-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .resolution-price {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .question h2 {
+                font-size: 20px;
+            }
+
+            .buttons-group {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const API_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/4012491/uevsdme/';
+
+        const PRICES = {
+            packages: {
+                'alarma': {
+                    name: 'Alarma solamente',
+                    basePrice: 0,
+                    pointsIncluded: 7,
+                    cameras: 0,
+                    description: 'Sistema básico de protección'
+                },
+                '4cam-2mp': {
+                    name: '4 Cámaras 2MP + Alarma',
+                    basePrice: 52.99,
+                    pointsIncluded: 5,
+                    cameras: 4,
+                    resolution: '2MP',
+                    upgradeTo4MP: 56.99
+                },
+                '4cam-4mp': {
+                    name: '4 Cámaras 4MP + Alarma',
+                    basePrice: 56.99,
+                    pointsIncluded: 5,
+                    cameras: 4,
+                    resolution: '4MP'
+                },
+                '6cam-2mp': {
+                    name: '6 Cámaras 2MP + Alarma',
+                    basePrice: 56.99,
+                    pointsIncluded: 5,
+                    cameras: 6,
+                    resolution: '2MP',
+                    upgradeTo4MP: 60.99
+                },
+                '6cam-4mp': {
+                    name: '6 Cámaras 4MP + Alarma',
+                    basePrice: 60.99,
+                    pointsIncluded: 5,
+                    cameras: 6,
+                    resolution: '4MP'
+                },
+                '8cam-2mp': {
+                    name: '8 Cámaras 2MP + Alarma',
+                    basePrice: 64.99,
+                    pointsIncluded: 5,
+                    cameras: 8,
+                    resolution: '2MP',
+                    upgradeTo4MP: 68.99
+                },
+                '8cam-4mp': {
+                    name: '8 Cámaras 4MP + Alarma',
+                    basePrice: 68.99,
+                    pointsIncluded: 5,
+                    cameras: 8,
+                    resolution: '4MP'
+                }
+            },
+            components: {
+                doorSensor: 1,
+                windowSensor: 1,
+                motionSensor: 2,
+                impactSensor: 2,
+                keyFob: 1,
+                videoDoorbel: 3
+            },
+            activation: 199,
+            extraPoint: 35,
+            contractMonths: 36
+        };
+
+        function ConfiguradorApp() {
+            const [step, setStep] = useState('segmentacion');
+            const [segmentType, setSegmentType] = useState(null);
+            const [customerProfile, setCustomerProfile] = useState(null);
+            const [levels, setLevels] = useState(1);
+            const [doors, setDoors] = useState(1);
+            const [windowProtection, setWindowProtection] = useState({
+                sensorApertura: 0,
+                sensorImpacto: 0
+            });
+            const [videoDoorbell, setVideoDoorbell] = useState(false);
+            const [selectedPackage, setSelectedPackage] = useState(null);
+            const [selectedResolution, setSelectedResolution] = useState('2MP');
+            const [additionalComponents, setAdditionalComponents] = useState({
+                keyFob: 0,
+                extraCameras: 0,
+                extraSensors: 0
+            });
+            const [formData, setFormData] = useState({
+                nombre: '',
+                email: '',
+                telefono: '',
+                direccion: ''
+            });
+            const [loading, setLoading] = useState(false);
+            const [submitted, setSubmitted] = useState(false);
+
+            // Calcular puntos totales
+            const calculatePoints = () => {
+                let points = 0;
+                const pkg = PRICES.packages[selectedPackage];
+
+                if (pkg) {
+                    points = doors; // Puertas
+                    points += windowProtection.sensorApertura;
+                    points += windowProtection.sensorImpacto * 2;
+                    if (videoDoorbell) points += 1;
+                    points += additionalComponents.keyFob;
+                    points += additionalComponents.extraSensors;
+
+                    return {
+                        used: points,
+                        included: pkg.pointsIncluded,
+                        extra: Math.max(0, points - pkg.pointsIncluded)
+                    };
+                }
+                return { used: 0, included: 0, extra: 0 };
+            };
+
+            // Calcular precio mensual
+            const calculateMonthlyPrice = () => {
+                const pkg = PRICES.packages[selectedPackage];
+                if (!pkg) return 0;
+
+                let price = pkg.basePrice;
+                const points = calculatePoints();
+                price += points.extra * PRICES.extraPoint;
+
+                return price;
+            };
+
+            // Calcular precio total inicial
+            const calculateTotalInitial = () => {
+                const monthlyPrice = calculateMonthlyPrice();
+                return (monthlyPrice * PRICES.contractMonths) + PRICES.activation;
+            };
+
+            const handleSubmit = async () => {
+                if (!formData.nombre || !formData.email || !formData.telefono) {
+                    alert('Por favor completa todos los campos');
+                    return;
+                }
+
+                setLoading(true);
+
+                const payload = {
+                    timestamp: new Date().toISOString(),
+                    segmentType,
+                    customerProfile,
+                    levels,
+                    doors,
+                    windowProtection,
+                    videoDoorbell,
+                    package: selectedPackage,
+                    resolution: selectedResolution,
+                    points: calculatePoints(),
+                    monthlyPrice: calculateMonthlyPrice(),
+                    activationFee: PRICES.activation,
+                    contractMonths: PRICES.contractMonths,
+                    totalInitial: calculateTotalInitial(),
+                    additionalComponents,
+                    customerInfo: formData
+                };
+
+                try {
+                    const response = await fetch(API_WEBHOOK, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    setSubmitted(true);
+                    setTimeout(() => {
+                        setStep('segmentacion');
+                        resetForm();
+                    }, 3000);
+                } catch (error) {
+                    alert('Error al enviar. Intenta de nuevo.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const resetForm = () => {
+                setSegmentType(null);
+                setCustomerProfile(null);
+                setLevels(1);
+                setDoors(1);
+                setWindowProtection({ sensorApertura: 0, sensorImpacto: 0 });
+                setVideoDoorbell(false);
+                setSelectedPackage(null);
+                setSelectedResolution('2MP');
+                setAdditionalComponents({ keyFob: 0, extraCameras: 0, extraSensors: 0 });
+                setFormData({ nombre: '', email: '', telefono: '', direccion: '' });
+                setSubmitted(false);
+            };
+
+            const progressPercentage = () => {
+                const steps = ['segmentacion', 'perfil', 'niveles', 'puertas', 'ventanas', 'doorbell', 'paquete', 'resumen', 'contacto'];
+                return ((steps.indexOf(step) + 1) / steps.length) * 100;
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <img src="VEOSmart-Large-WhiteRed.png" alt="ACT Security Logo" />
+                        <h1>Configurador de Sistemas</h1>
+                        <p>Diseña tu sistema de seguridad perfecto</p>
+                    </div>
+
+                    <div className="content">
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${progressPercentage()}%` }}></div>
+                        </div>
+
+                        {/* SEGMENTACIÓN */}
+                        {step === 'segmentacion' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Qué tipo de propiedad deseas proteger?</h2>
+                                    <div className="options">
+                                        <button
+                                            className={`option-btn ${segmentType === 'residential' ? 'selected' : ''}`}
+                                            onClick={() => { setSegmentType('residential'); setStep('perfil'); }}
+                                        >
+                                            <span className="icon">🏠</span>
+                                            Residencial
+                                        </button>
+                                        <button
+                                            className={`option-btn ${segmentType === 'commercial' ? 'selected' : ''}`}
+                                            onClick={() => { setSegmentType('commercial'); alert('Sistemas comerciales requieren evaluación personalizada. Contacta con nosotros: 787-500-7055'); setSegmentType(null); }}
+                                        >
+                                            <span className="icon">🏢</span>
+                                            Comercial
+                                        </button>
+                                        <button
+                                            className={`option-btn ${segmentType === 'industrial' ? 'selected' : ''}`}
+                                            onClick={() => { setSegmentType('industrial'); alert('Sistemas industriales requieren diseño especializado. Contacta con nosotros: 787-500-7055'); setSegmentType(null); }}
+                                        >
+                                            <span className="icon">🏭</span>
+                                            Industrial
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PERFIL */}
+                        {step === 'perfil' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Cuál es tu situación actual?</h2>
+                                    <div className="options">
+                                        <button
+                                            className={`option-btn ${customerProfile === 'first' ? 'selected' : ''}`}
+                                            onClick={() => { setCustomerProfile('first'); setStep('niveles'); }}
+                                        >
+                                            <span className="icon">✨</span>
+                                            Primera vez instalando seguridad
+                                        </button>
+                                        <button
+                                            className={`option-btn ${customerProfile === 'upgrade' ? 'selected' : ''}`}
+                                            onClick={() => { setCustomerProfile('upgrade'); setStep('niveles'); }}
+                                        >
+                                            <span className="icon">⬆️</span>
+                                            Estoy mejorando mi sistema
+                                        </button>
+                                        <button
+                                            className={`option-btn ${customerProfile === 'robbery' ? 'selected' : ''}`}
+                                            onClick={() => { setCustomerProfile('robbery'); setStep('niveles'); }}
+                                        >
+                                            <span className="icon">🔒</span>
+                                            Recientemente sufrí un robo
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('segmentacion')}>← Atrás</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* NIVELES */}
+                        {step === 'niveles' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Cuántos niveles tiene tu hogar?</h2>
+                                    <div className="slider-group">
+                                        <input
+                                            type="range"
+                                            min="1"
+                                            max="5"
+                                            value={levels}
+                                            onChange={(e) => setLevels(parseInt(e.target.value))}
+                                        />
+                                        <div className="value-display">{levels} nivel{levels > 1 ? 'es' : ''}</div>
+                                    </div>
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('perfil')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('puertas')}>Siguiente →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PUERTAS */}
+                        {step === 'puertas' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Cuántas puertas principales tiene tu casa?</h2>
+                                    <p style={{ marginBottom: '20px', color: '#666' }}>Cada puerta = 1 punto de protección</p>
+                                    <div className="slider-group">
+                                        <input
+                                            type="range"
+                                            min="1"
+                                            max="10"
+                                            value={doors}
+                                            onChange={(e) => setDoors(parseInt(e.target.value))}
+                                        />
+                                        <div className="value-display">{doors} puerta{doors > 1 ? 's' : ''}</div>
+                                    </div>
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('niveles')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('ventanas')}>Siguiente →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* VENTANAS */}
+                        {step === 'ventanas' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Cómo deseas proteger tus ventanas?</h2>
+                                    <div className="slider-group">
+                                        <label>Sensores de apertura (1 punto c/u)</label>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="20"
+                                            value={windowProtection.sensorApertura}
+                                            onChange={(e) => setWindowProtection({ ...windowProtection, sensorApertura: parseInt(e.target.value) })}
+                                        />
+                                        <div className="value-display">{windowProtection.sensorApertura}</div>
+                                    </div>
+                                    <div className="slider-group">
+                                        <label>Sensores de impacto (2 puntos c/u)</label>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="15"
+                                            value={windowProtection.sensorImpacto}
+                                            onChange={(e) => setWindowProtection({ ...windowProtection, sensorImpacto: parseInt(e.target.value) })}
+                                        />
+                                        <div className="value-display">{windowProtection.sensorImpacto}</div>
+                                    </div>
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('puertas')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('doorbell')}>Siguiente →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* VIDEO DOORBELL */}
+                        {step === 'doorbell' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>¿Deseas añadir un timbre inteligente con cámara?</h2>
+                                    <div className="options">
+                                        <button
+                                            className={`option-btn ${videoDoorbell ? 'selected' : ''}`}
+                                            onClick={() => setVideoDoorbell(true)}
+                                        >
+                                            <span className="icon">✅</span>
+                                            Sí, agregar timbre inteligente
+                                        </button>
+                                        <button
+                                            className={`option-btn ${!videoDoorbell ? 'selected' : ''}`}
+                                            onClick={() => setVideoDoorbell(false)}
+                                        >
+                                            <span className="icon">❌</span>
+                                            No, por ahora no
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('ventanas')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('paquete')}>Siguiente →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PAQUETE */}
+                        {step === 'paquete' && (
+                            <div className="section active">
+                                <div className="question">
+                                    <h2>Selecciona tu paquete base</h2>
+                                    <div className="options">
+                                        <button
+                                            className={`option-btn ${selectedPackage === '4cam-2mp' ? 'selected' : ''}`}
+                                            onClick={() => { setSelectedPackage('4cam-2mp'); setSelectedResolution('2MP'); }}
+                                        >
+                                            4 Cámaras + Alarma<br/>
+                                            <small style={{ fontSize: '12px', opacity: 0.8 }}>Desde $52.99/mes</small>
+                                        </button>
+                                        <button
+                                            className={`option-btn ${selectedPackage === '6cam-2mp' ? 'selected' : ''}`}
+                                            onClick={() => { setSelectedPackage('6cam-2mp'); setSelectedResolution('2MP'); }}
+                                        >
+                                            6 Cámaras + Alarma<br/>
+                                            <small style={{ fontSize: '12px', opacity: 0.8 }}>Desde $56.99/mes</small>
+                                        </button>
+                                        <button
+                                            className={`option-btn ${selectedPackage === '8cam-2mp' ? 'selected' : ''}`}
+                                            onClick={() => { setSelectedPackage('8cam-2mp'); setSelectedResolution('2MP'); }}
+                                        >
+                                            8 Cámaras + Alarma<br/>
+                                            <small style={{ fontSize: '12px', opacity: 0.8 }}>Desde $64.99/mes</small>
+                                        </button>
+                                    </div>
+
+                                    {selectedPackage && (
+                                        <div>
+                                            <h3 style={{ marginTop: '30px', marginBottom: '15px', color: '#333' }}>Selecciona resolución de cámaras</h3>
+                                            <div className="resolution-options">
+                                                <div
+                                                    className={`resolution-card ${selectedResolution === '2MP' ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedResolution('2MP')}
+                                                >
+                                                    <div className="resolution-title">2MP</div>
+                                                    <div className="resolution-price">${PRICES.packages[selectedPackage]?.basePrice || 0}/mes</div>
+                                                </div>
+                                                <div
+                                                    className={`resolution-card ${selectedResolution === '4MP' ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedResolution('4MP')}
+                                                >
+                                                    <div className="resolution-title">4MP</div>
+                                                    <div className="resolution-price">+$4.00/mes</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('doorbell')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('resumen')}>Siguiente →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* RESUMEN */}
+                        {step === 'resumen' && (
+                            <div className="section active">
+                                <h2 style={{ marginBottom: '20px' }}>Resumen de tu configuración</h2>
+
+                                <div className="summary-box">
+                                    <h3>Paquete seleccionado</h3>
+                                    <div className="summary-item">
+                                        <span>Paquete:</span>
+                                        <strong>{PRICES.packages[selectedPackage]?.name}</strong>
+                                    </div>
+                                    <div className="summary-item">
+                                        <span>Resolución:</span>
+                                        <strong>{selectedResolution}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="summary-box">
+                                    <h3>Análisis de puntos</h3>
+                                    <div className="summary-item">
+                                        <span>Puertas:</span>
+                                        <strong>{doors} punto{doors !== 1 ? 's' : ''}</strong>
+                                    </div>
+                                    <div className="summary-item">
+                                        <span>Sensores apertura ventanas:</span>
+                                        <strong>{windowProtection.sensorApertura} punto{windowProtection.sensorApertura !== 1 ? 's' : ''}</strong>
+                                    </div>
+                                    <div className="summary-item">
+                                        <span>Sensores impacto ventanas:</span>
+                                        <strong>{windowProtection.sensorImpacto * 2} punto{(windowProtection.sensorImpacto * 2) !== 1 ? 's' : ''}</strong>
+                                    </div>
+                                    {videoDoorbell && (
+                                        <div className="summary-item">
+                                            <span>Timbre inteligente:</span>
+                                            <strong>1 punto</strong>
+                                        </div>
+                                    )}
+                                    <div className="summary-item" style={{ borderTop: '2px solid #eee', marginTop: '10px', paddingTop: '10px' }}>
+                                        <span><strong>Puntos utilizados:</strong></span>
+                                        <strong style={{ color: '#FF0000' }}>{calculatePoints().used} / {calculatePoints().included + calculatePoints().extra}</strong>
+                                    </div>
+                                    {calculatePoints().extra > 0 && (
+                                        <div className="summary-item">
+                                            <span>Puntos adicionales:</span>
+                                            <strong style={{ color: '#FF0000' }}>{calculatePoints().extra} × $35 = ${calculatePoints().extra * 35}</strong>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="summary-box">
+                                    <h3>Desglose de precio</h3>
+                                    <div className="summary-item">
+                                        <span>Paquete base:</span>
+                                        <strong>${PRICES.packages[selectedPackage]?.basePrice || 0}/mes</strong>
+                                    </div>
+                                    {selectedResolution === '4MP' && (
+                                        <div className="summary-item">
+                                            <span>Upgrade 4MP:</span>
+                                            <strong>+$4.00/mes</strong>
+                                        </div>
+                                    )}
+                                    {calculatePoints().extra > 0 && (
+                                        <div className="summary-item">
+                                            <span>Puntos adicionales:</span>
+                                            <strong>+${(calculatePoints().extra * PRICES.extraPoint)}/mes</strong>
+                                        </div>
+                                    )}
+                                    <div className="summary-item">
+                                        <span>Cuota de activación:</span>
+                                        <strong>${PRICES.activation}</strong>
+                                    </div>
+                                    <div className="total">
+                                        <span>Mensualidad total:</span>
+                                        <span>${calculateMonthlyPrice().toFixed(2)}</span>
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#666', marginTop: '15px', padding: '10px', background: '#f0f0f0', borderRadius: '4px' }}>
+                                        <strong>Contrato:</strong> {PRICES.contractMonths} meses<br/>
+                                        <strong>Total inicial:</strong> ${calculateTotalInitial().toFixed(2)} (cuota de activación incluida)
+                                    </div>
+                                </div>
+
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('paquete')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={() => setStep('contacto')}>Continuar →</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CONTACTO */}
+                        {step === 'contacto' && !submitted && (
+                            <div className="section active">
+                                <h2 style={{ marginBottom: '20px' }}>Información de contacto</h2>
+                                <p style={{ color: '#666', marginBottom: '20px' }}>Completa tus datos para finalizar tu configuración</p>
+
+                                <div className="form-group">
+                                    <label>Nombre completo *</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Tu nombre"
+                                        value={formData.nombre}
+                                        onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Email *</label>
+                                    <input
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Teléfono *</label>
+                                    <input
+                                        type="tel"
+                                        placeholder="787-500-7055"
+                                        value={formData.telefono}
+                                        onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Dirección</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Tu dirección"
+                                        value={formData.direccion}
+                                        onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="buttons-group">
+                                    <button className="btn-secondary" onClick={() => setStep('resumen')}>← Atrás</button>
+                                    <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
+                                        {loading ? 'Enviando...' : 'Enviar Configuración'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CONFIRMACIÓN */}
+                        {submitted && (
+                            <div className="section active" style={{ textAlign: 'center', padding: '40px' }}>
+                                <div style={{ fontSize: '60px', marginBottom: '20px' }}>✅</div>
+                                <h2 style={{ color: '#4caf50', marginBottom: '20px' }}>¡Configuración enviada!</h2>
+                                <p style={{ fontSize: '16px', color: '#666', marginBottom: '20px' }}>
+                                    Pronto nos pondremos en contacto para confirmar tu instalación.
+                                </p>
+                                <p style={{ fontSize: '14px', color: '#999' }}>
+                                    Teléfono: <strong>787-500-7055</strong>
+                                </p>
+                                <p style={{ fontSize: '12px', color: '#bbb', marginTop: '20px' }}>
+                                    Redirigiendo en 3 segundos...
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ConfiguradorApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
