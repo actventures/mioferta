@@ -22,20 +22,33 @@
         .header { 
             text-align: center; 
             margin-bottom: 40px; 
-            border-bottom: 3px solid #FF0000;
-            background: linear-gradient(135deg, #990000 0%, #FF0000 100%);
-            padding: 40px;
+            border-bottom: 5px solid #FF0000;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            padding: 50px;
             border-radius: 10px;
             color: white;
+            position: relative;
+        }
+        .mascot-header {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            max-height: 80px;
+            opacity: 0.8;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         .logo-header {
-            max-height: 100px;
-            margin-bottom: 20px;
+            max-height: 130px;
+            margin-bottom: 30px;
             background: white;
-            padding: 20px;
+            padding: 35px;
             border-radius: 15px;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(255,0,0,0.4);
         }
         .header h1 { 
             color: white; 
@@ -139,6 +152,47 @@
             display: block;
             margin-bottom: 5px;
             font-size: 16px;
+        }
+        
+        .addon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .addon-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .addon-card:hover {
+            border-color: #FF0000;
+            background: #fff5f5;
+            transform: translateY(-3px);
+        }
+        .addon-card.selected {
+            background: #FFE6E6;
+            border-color: #FF0000;
+            border-width: 3px;
+        }
+        .addon-card img {
+            max-height: 100px;
+            width: auto;
+            margin-bottom: 10px;
+            object-fit: contain;
+        }
+        .addon-card input[type="checkbox"] {
+            margin-top: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
         }
         
         .nav-buttons { 
@@ -311,12 +365,26 @@
             text-align: center;
         }
         
+        .mascot-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .mascot-section img {
+            max-height: 150px;
+            opacity: 0.7;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
             }
             .header h1 {
                 font-size: 26px;
+            }
+            .mascot-header {
+                max-height: 60px;
+                top: 10px;
+                right: 10px;
             }
             .product-grid {
                 grid-template-columns: 1fr;
@@ -330,6 +398,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <img src="Mascot.png" alt="ACT Security Mascot" class="mascot-header">
             <img src="VEOSmart-Large-WhiteRed.png" alt="ACT Security" class="logo-header">
             <h1>Configurador de Sistemas</h1>
             <p>Tecnología IP VeoSmart + Alarma + Panel ADT Command</p>
@@ -472,8 +541,55 @@
             </div>
         </div>
 
-        <!-- RESUMEN -->
+        <!-- EQUIPOS ADICIONALES -->
         <div class="section" id="seg5">
+            <h2>Equipos Adicionales (Opcional)</h2>
+            <p style="color: #666; margin-bottom: 20px;">Complementa tu sistema con sensores de movimiento y controles remotos</p>
+            
+            <h3>Sensores de Movimiento</h3>
+            <div class="addon-grid">
+                <button class="addon-card" onclick="toggleAddon(this, 'motion-1', 25)">
+                    <img src="Motion.png" alt="Motion Sensor">
+                    <strong>1 Sensor</strong>
+                    <small>Movimiento +$25/mes</small>
+                    <input type="checkbox" id="motion-1">
+                </button>
+                <button class="addon-card" onclick="toggleAddon(this, 'motion-3', 60)">
+                    <img src="Motion.png" alt="Motion Sensors">
+                    <strong>3 Sensores</strong>
+                    <small>Movimiento +$60/mes</small>
+                    <input type="checkbox" id="motion-3">
+                </button>
+            </div>
+
+            <h3 style="margin-top: 40px;">Controles Remotos (Key Fobs)</h3>
+            <div class="addon-grid">
+                <button class="addon-card" onclick="toggleAddon(this, 'key-1', 15)">
+                    <img src="keyfob.png" alt="Key Fob">
+                    <strong>1 Control</strong>
+                    <small>Key Fob +$15/mes</small>
+                    <input type="checkbox" id="key-1">
+                </button>
+                <button class="addon-card" onclick="toggleAddon(this, 'key-2', 25)">
+                    <img src="keyfob.png" alt="Key Fobs">
+                    <strong>2 Controles</strong>
+                    <small>Key Fobs +$25/mes</small>
+                    <input type="checkbox" id="key-2">
+                </button>
+            </div>
+
+            <div class="mascot-section">
+                <img src="Mascot.png" alt="Mascot">
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav btn-secondary" onclick="prev(5, 4)">← Atrás</button>
+                <button class="btn-nav btn-primary" onclick="next(5, 6)">Siguiente →</button>
+            </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="section" id="seg6">
             <h2>Resumen de tu sistema</h2>
             
             <div class="summary">
@@ -488,6 +604,10 @@
                 <div class="summary-row">
                     <span><strong>Niveles:</strong></span>
                     <strong id="levelsDisplay">-</strong>
+                </div>
+                <div class="summary-row">
+                    <span><strong>Equipos adicionales:</strong></span>
+                    <strong id="addonsDisplay">Ninguno</strong>
                 </div>
                 <div class="summary-row" style="border-top: 2px solid #FF0000; margin: 15px 0; padding-top: 15px;">
                     <span><strong>Precio mensual:</strong></span>
@@ -508,13 +628,13 @@
             </p>
 
             <div class="nav-buttons">
-                <button class="btn-nav btn-secondary" onclick="prev(5, 4)">← Atrás</button>
-                <button class="btn-nav btn-primary" onclick="next(5, 6)">Continuar →</button>
+                <button class="btn-nav btn-secondary" onclick="prev(6, 5)">← Atrás</button>
+                <button class="btn-nav btn-primary" onclick="next(6, 7)">Continuar →</button>
             </div>
         </div>
 
         <!-- CONTACTO -->
-        <div class="section" id="seg6">
+        <div class="section" id="seg7">
             <h2>Completa tus datos</h2>
             <p style="color: #666; margin-bottom: 20px;">Te contactaremos para confirmar tu instalación</p>
             
@@ -524,13 +644,13 @@
             <input type="text" id="direccion" placeholder="Dirección">
             
             <div class="nav-buttons">
-                <button class="btn-nav btn-secondary" onclick="prev(6, 5)">← Atrás</button>
+                <button class="btn-nav btn-secondary" onclick="prev(7, 6)">← Atrás</button>
                 <button class="btn-nav btn-primary" onclick="submit()">Enviar Configuración</button>
             </div>
         </div>
 
         <!-- ÉXITO -->
-        <div class="section" id="seg7">
+        <div class="section" id="seg8">
             <div class="success">
                 <h2>✅ ¡Configuración Enviada!</h2>
                 <p style="margin: 20px 0; font-size: 16px;">Tu sistema ha sido registrado exitosamente en nuestro sistema.</p>
@@ -550,6 +670,8 @@
         let selectedPackage = null;
         let selectedPrice = null;
         let selectedPkgName = null;
+        let addons = {};
+        let addonCost = 0;
 
         function next(from, to) {
             if (from === 3 && to === 4) {
@@ -562,8 +684,11 @@
                 }
                 currentStep = to;
                 showSection(to);
-                updateSummary();
             } else if (from === 5 && to === 6) {
+                currentStep = to;
+                showSection(to);
+                updateSummary();
+            } else if (from === 6 && to === 7) {
                 currentStep = to;
                 showSection(to);
             } else {
@@ -593,7 +718,7 @@
         }
 
         function updateProgress() {
-            const percent = (currentStep / 7) * 100;
+            const percent = (currentStep / 8) * 100;
             document.getElementById('progress').style.width = percent + '%';
         }
 
@@ -606,6 +731,22 @@
             selectedPackage = pkg;
             selectedPrice = price;
             selectedPkgName = name;
+        }
+
+        function toggleAddon(btn, addonId, cost) {
+            const checkbox = btn.querySelector('input[type="checkbox"]');
+            
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                btn.classList.remove('selected');
+                delete addons[addonId];
+                addonCost -= cost;
+            } else {
+                checkbox.checked = true;
+                btn.classList.add('selected');
+                addons[addonId] = cost;
+                addonCost += cost;
+            }
         }
 
         function updateDoors() {
@@ -631,9 +772,13 @@
             document.getElementById('pkgDisplay').textContent = selectedPkgName;
             document.getElementById('doorsDisplay').textContent = doors + ' puerta' + (doors > 1 ? 's' : '');
             document.getElementById('levelsDisplay').textContent = levels + ' nivel' + (levels > 1 ? 'es' : '');
-            document.getElementById('priceDisplay').textContent = selectedPrice;
             
-            const monthly = prices[selectedPackage];
+            let addonsText = Object.keys(addons).length > 0 ? Object.keys(addons).join(', ') : 'Ninguno';
+            document.getElementById('addonsDisplay').textContent = addonsText;
+            
+            const monthly = prices[selectedPackage] + addonCost;
+            document.getElementById('priceDisplay').textContent = '$' + monthly.toFixed(2);
+            
             const total = (monthly * 36) + 199;
             document.getElementById('totalDisplay').textContent = '$' + total.toFixed(2);
         }
@@ -654,6 +799,7 @@
                 nombre, email, telefono, direccion,
                 package: selectedPkgName,
                 price: selectedPrice,
+                addons: Object.keys(addons).length > 0 ? Object.keys(addons).join(', ') : 'Ninguno',
                 doors: document.getElementById('doors').value,
                 levels: document.getElementById('levels').value
             };
@@ -662,7 +808,7 @@
                 method: 'POST',
                 body: JSON.stringify(data)
             }).then(() => {
-                next(6, 7);
+                next(7, 8);
                 setTimeout(() => location.reload(), 3000);
             }).catch(err => {
                 alert('Error al enviar. Intenta de nuevo.');
